@@ -1,0 +1,8 @@
+<div class="col-sm-3 offset-md-1"> <br>
+<h1 class="fs-5">Параметри генератора розподілу Бейтс</h1><p></p>
+<%= form_with url: calculation_path, method: "get", :class => 'form-group' do |f| %>
+    <%= f.number_field :n, :class =>"form-control", required: true, in: 1..1000000, step: 1,  placeholder: "n" %> <br>
+    <%= f.number_field :N, :class =>"form-control", required: true, in: 1..1000000, step: 1,  placeholder: "N" %> <br>
+    <%= f.submit "Calculate", :class => "btn btn-primary"  %>
+<% end %>
+</div>

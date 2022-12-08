@@ -1,0 +1,84 @@
+<!--chartkick-->
+<div class = "container-xxl bd-gutter mt-3 my-md-4 bd-layout">
+  <h1>Теоретичні значення</h1>
+  <%= line_chart @calculation_result['pdf_distribution_data'],
+                 xtitle: 'x', ytitle: 'density',
+                 height: "500px", points: false, min: 0, round: 7 %>
+
+  <br>
+  <p class="fs-5">
+    Теоретичне математичне очікування: <%= "%0.5f" % @calculation_result['pdfMeanValue'] %> <br>
+  </p>
+  <p class="fs-5">
+    Теоретичне значення дисперсії: <%= "%0.5f" % @calculation_result['pdfVarianceValue'] %> <br>
+  </p>
+  <br>
+
+  <h1>Метод Неймана</h1>
+  <%= column_chart @calculation_result['neumannMethod'],
+                 label: 'Neumann',
+                 xtitle: 'x', ytitle: 'frequency',
+                 height: "500px" %>
+
+  <br>
+  <p class="fs-5">
+    Теоретичне математичне очікування: <%= "%0.5f" % @calculation_result['pdfMeanValue'] %> <br>
+    Практичне математичне очікування: <%= "%0.5f" % @calculation_result['neumannMethodExpectedValue'] %> <br>
+  </p>
+  <p class="fs-5">
+    Теоретичне значення дисперсії: <%= "%0.5f" % @calculation_result['pdfVarianceValue'] %> <br>
+    Практичне значення дисперсії: <%= "%0.5f" % @calculation_result['neumannMethodVariance'] %> <br>
+  </p>
+  <br>
+
+  <h1>Алгоритм Метрополіса</h1>
+  <%= column_chart @calculation_result['metropolisMethod'],
+                 label: 'Metropolis',
+                 xtitle: 'x', ytitle: 'frequency',
+                 height: "500px" %>
+
+  <br>
+  <p class="fs-5">
+    Теоретичне математичне очікування: <%= "%0.5f" % @calculation_result['pdfMeanValue'] %> <br>
+    Практичне математичне очікування: <%= "%0.5f" % @calculation_result['metropolisMethodExpectedValue'] %> <br>
+  </p>
+  <p class="fs-5">
+    Теоретичне значення дисперсії: <%= "%0.5f" % @calculation_result['pdfVarianceValue'] %> <br>
+    Практичне значення дисперсії: <%= "%0.5f" % @calculation_result['metropolisMethodVariance'] %> <br>
+  </p>
+  <br>
+
+  <br>
+  <table class="table">
+    <thead class="table-dark">
+    <tr>
+      <th scope="col">Interval, x</th>
+      <th scope="col">n</th>
+      <th scope="col">Метод Неймана</th>
+      <th scope="col">Алгоритм Метрополіса</th>
+    </tr>
+    </thead>
+    <% (@a..@b).step(@step).to_a.each do |i| %>
+      <tr>
+        <td><%= i.round(2) %> - <%= (i + @step).round(2) %></td>
+        <td><%= @n %></td>
+        <% if !@calculation_result['neumannMethod'].values[i * (1 / @step)].nil? && !@calculation_result['metropolisMethod'].values[i * (1 / @step)].nil?%>
+          <td><%= "%0.7f" % @calculation_result['neumannMethod'].values[i * (1 / @step)] %></td>
+          <td><%= "%0.7f" % @calculation_result['metropolisMethod'].values[i * (1 / @step)] %></td>
+        <% else %>
+          <td><%= "0.0000000"%></td>
+          <td><%= "0.0000000"%></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </table>
+
+  <br>
+  <h1>Гістограма для методів розподілу</h1>
+  <%= scatter_chart [
+                      {name: "Метод Неймана", data: @calculation_result['neumannMethod'] },
+                      {name: "Алгоритм Метрополіса", data: @calculation_result['metropolisMethod'] }
+                    ], height:"500px", xtitle: 'k', ytitle: 'Pi / Pn'%>
+  <br>
+  <span class="py-2 text-dark text-decoration-none"><%= link_to "Завантажити дані .zip", download_path + "?N=" + @calculation_result['options']['count'].to_s%></span>
+</div>
